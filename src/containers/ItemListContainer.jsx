@@ -2,9 +2,14 @@
 import React, { useEffect, useState } from 'react'
 import ItemList from '../components/ItemList'
 import { useParams } from 'react-router-dom'
-import { getProducts, getProductsByCategory } from '../firebase/firestore'
 
-export default function ItemListContainer(){
+// IMPORTACIÓN CORRECTA
+import { 
+  getProductsWithFallback, 
+  getProductsByCategoryWithFallback 
+} from '../firebase/firestore'
+
+export default function ItemListContainer() {
   const { catId } = useParams()
   const [products, setProducts] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -13,7 +18,10 @@ export default function ItemListContainer(){
     setLoading(true)
     const load = async () => {
       try {
-        const data = catId ? await getProductsByCategoryWithFallback(catId) : await getProductsWithFallback()
+        const data = catId
+          ? await getProductsByCategoryWithFallback(catId)
+          : await getProductsWithFallback()
+
         setProducts(data)
       } catch (e) {
         console.error(e)
@@ -22,6 +30,7 @@ export default function ItemListContainer(){
         setLoading(false)
       }
     }
+
     load()
   }, [catId])
 
